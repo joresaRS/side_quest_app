@@ -1,35 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:side_quest_app/pages/favorito_page.dart';
+import 'package:side_quest_app/pages/groups_page.dart';
+import 'package:side_quest_app/pages/inicio_page.dart';
+import 'package:side_quest_app/pages/lupa_page.dart';
+import 'package:side_quest_app/pages/perfil_page.dart';
 
-// Páginas de ejemplo
-class GroupsPage extends StatelessWidget {
-  const GroupsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("Grupos Page"));
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("Perfil Page"));
-  }
-}
-
-class FavoritesPage extends StatelessWidget {
-  const FavoritesPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("Favoritos Page"));
-  }
-}
-
-// HomePage principal con barra de navegación
+// HomePage principal con barra de navegación y FAB central
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -42,98 +19,79 @@ class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser;
 
   final List<Widget> _pages = const [
-    HomeContent(), // 🏠 Home
-    FavoritesPage(), // ⭐ Favoritos
-    HomeContent(), // 🔍 Home central (duplicamos, pero controlado por FAB)
+    InicioPage(), // 🏠 Home
+    FavoritoPage(), // ⭐ Favoritos
+    LupaPage(), // 🔍 Lupa central
     GroupsPage(), // 👥 Grupos
-    ProfilePage(), // 👤 Perfil
+    PerfilPage(), // 👤 Perfil
   ];
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  static const Color professionalBlue = Color.fromARGB(
+    255,
+    0,
+    92,
+    198,
+  ); // azul serio
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
         shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.home),
-              onPressed: () => setState(() => _currentIndex = 0),
-            ),
-            IconButton(
-              icon: const Icon(Icons.favorite),
-              onPressed: () => setState(() => _currentIndex = 1),
-            ),
-            const SizedBox(width: 40), // espacio para el FAB central
-            IconButton(
-              icon: const Icon(Icons.group),
-              onPressed: () => setState(() => _currentIndex = 3),
-            ),
-            IconButton(
-              icon: const Icon(Icons.person),
-              onPressed: () => setState(() => _currentIndex = 4),
-            ),
-          ],
+        notchMargin: 2,
+        child: SizedBox(
+          height: 80, // barra más alta para que el FAB encaje
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.home),
+                color: professionalBlue,
+                onPressed: () => _onTabTapped(0),
+              ),
+              IconButton(
+                icon: const Icon(Icons.favorite),
+                color: professionalBlue,
+                onPressed: () => _onTabTapped(1),
+              ),
+              const SizedBox(width: 40), // espacio para el FAB
+              IconButton(
+                icon: const Icon(Icons.group),
+                color: professionalBlue,
+                onPressed: () => _onTabTapped(3),
+              ),
+              IconButton(
+                icon: const Icon(Icons.person),
+                color: professionalBlue,
+                onPressed: () => _onTabTapped(4),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
-        onPressed: () => setState(() => _currentIndex = 2),
-        child: const Icon(Icons.search, size: 30),
+      floatingActionButton: Transform.translate(
+        offset: const Offset(0, 30), // baja mucho el FAB
+        child: SizedBox(
+          width: 80,
+          height: 80,
+          child: FloatingActionButton(
+            backgroundColor: professionalBlue,
+            shape: const CircleBorder(),
+            onPressed: () => _onTabTapped(2),
+            child: const Icon(Icons.search, size: 40, color: Colors.white),
+            elevation: 8, // sombra ligera
+          ),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
-  }
-}
-
-// Contenido de la pestaña Home
-class HomeContent extends StatelessWidget {
-  const HomeContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.grey.shade200,
-            backgroundImage: user?.photoURL != null
-                ? NetworkImage(user!.photoURL!)
-                : null,
-            child: user?.photoURL == null
-                ? const Icon(Icons.account_circle, size: 80, color: Colors.grey)
-                : null,
-          ),
-          const SizedBox(height: 20),
-          Text(
-            "Name: ${user?.displayName ?? 'No Name'}",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            "Email: ${user?.email ?? 'No Email'}",
-            style: const TextStyle(fontSize: 16, color: Colors.black54),
-          ),
-          const SizedBox(height: 30),
-          ElevatedButton.icon(
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-            },
-            icon: const Icon(Icons.logout),
-            label: const Text("Cerrar sesión"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

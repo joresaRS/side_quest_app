@@ -11,10 +11,12 @@ class GoogleLoginScreen extends StatefulWidget {
   State<GoogleLoginScreen> createState() => _GoogleLoginScreenState();
 }
 
-class _GoogleLoginScreenState extends State<GoogleLoginScreen> with TickerProviderStateMixin {
+class _GoogleLoginScreenState extends State<GoogleLoginScreen>
+    with TickerProviderStateMixin {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   bool isLogin = true;
   String? errorMessage;
@@ -25,9 +27,9 @@ class _GoogleLoginScreenState extends State<GoogleLoginScreen> with TickerProvid
     });
 
     if (isLogin) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login con correo')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Login con correo')));
     } else {
       if (passwordController.text != confirmPasswordController.text) {
         setState(() {
@@ -35,9 +37,9 @@ class _GoogleLoginScreenState extends State<GoogleLoginScreen> with TickerProvid
         });
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registro con correo')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Registro con correo')));
     }
   }
 
@@ -130,7 +132,10 @@ class _GoogleLoginScreenState extends State<GoogleLoginScreen> with TickerProvid
                           const SizedBox(height: 10),
                           Text(
                             errorMessage!,
-                            style: const TextStyle(color: Colors.red, fontSize: 14),
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 14,
+                            ),
                           ),
                         ],
                         const SizedBox(height: 20),
@@ -145,7 +150,10 @@ class _GoogleLoginScreenState extends State<GoogleLoginScreen> with TickerProvid
                           onPressed: handleAuth,
                           child: Text(
                             isLogin ? "Iniciar Sesión" : "Registrarse",
-                            style: const TextStyle(fontSize: 18, color: Colors.white),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -161,22 +169,32 @@ class _GoogleLoginScreenState extends State<GoogleLoginScreen> with TickerProvid
                             isLogin
                                 ? "¿No tienes cuenta? Regístrate"
                                 : "¿Ya tienes cuenta? Inicia sesión",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.teal,
+                            ),
                           ),
                         ),
                         const Divider(height: 40, thickness: 1),
                         GestureDetector(
                           onTap: () async {
-                            bool result = await FirebaseServices().signInWithGoogle();
+                            bool result = await FirebaseServices()
+                                .signInWithGoogle();
                             if (result) {
                               Navigator.pushReplacementNamed(context, '/home');
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Google Sign-In failed')),
+                                const SnackBar(
+                                  content: Text('Google Sign-In failed'),
+                                ),
                               );
                             }
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 16,
+                            ),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: Colors.grey),
@@ -185,7 +203,10 @@ class _GoogleLoginScreenState extends State<GoogleLoginScreen> with TickerProvid
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Image.asset('lib/images/google.png', height: 30),
+                                Image.asset(
+                                  'lib/images/google.png',
+                                  height: 30,
+                                ),
                                 const SizedBox(width: 12),
                                 const Text(
                                   'Continuar con Google',
